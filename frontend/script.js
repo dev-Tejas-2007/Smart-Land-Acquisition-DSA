@@ -1,271 +1,467 @@
-// ==========================================
-// LANDWISE - Dashboard JavaScript
-// ==========================================
+// ======================================================
+// LANDWISE - FINAL DASHBOARD JAVASCRIPT
+// ======================================================
 
+document.addEventListener("DOMContentLoaded", () => {
 
-// LIVE CLOCK
+    // ==================================================
+    // LIVE TIME
+    // ==================================================
 
-function updateTime() {
+    function updateTime() {
 
-    const now = new Date();
+        const now = new Date();
 
-    const time = now.toLocaleTimeString("en-IN", {
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit"
-    });
-
-    const syncTime = document.getElementById("syncTime");
-
-    if (syncTime) {
-        syncTime.textContent =
-            "Last synchronized: " + time;
-    }
-}
-
-setInterval(updateTime, 1000);
-updateTime();
-
-
-// SIDEBAR NAVIGATION
-
-const navLinks = document.querySelectorAll("nav a");
-
-navLinks.forEach(link => {
-
-    link.addEventListener("click", function(event) {
-
-        event.preventDefault();
-
-        navLinks.forEach(item => {
-            item.classList.remove("active");
+        const time = now.toLocaleTimeString("en-IN", {
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit"
         });
 
-        this.classList.add("active");
+        const footer = document.querySelector("#syncTime");
 
-        console.log(
-            "Navigation:",
-            this.innerText.trim()
-        );
+        if (footer) {
+            footer.textContent = "Last synchronized: " + time;
+        }
+    }
+
+    updateTime();
+    setInterval(updateTime, 1000);
+
+
+    // ==================================================
+    // SIDEBAR NAVIGATION
+    // ==================================================
+
+    const navLinks = document.querySelectorAll("nav a");
+
+    const pages = document.querySelectorAll(".page-section");
+
+    function hideAllPages() {
+
+        pages.forEach(page => {
+            page.classList.remove("active-page");
+        });
+    }
+
+    navLinks.forEach(link => {
+
+        link.addEventListener("click", function (event) {
+
+            event.preventDefault();
+
+            navLinks.forEach(item => {
+                item.classList.remove("active");
+            });
+
+            this.classList.add("active");
+
+            const pageName =
+                this.innerText.trim().toLowerCase();
+
+            hideAllPages();
+
+            // If extra pages exist
+            if (pageName.includes("land records")) {
+
+                const page =
+                    document.querySelector("#landRecordsPage");
+
+                if (page) page.classList.add("active-page");
+
+            } else if (pageName.includes("project map")) {
+
+                const page =
+                    document.querySelector("#mapPage");
+
+                if (page) page.classList.add("active-page");
+
+            } else if (pageName.includes("priority")) {
+
+                const page =
+                    document.querySelector("#priorityPage");
+
+                if (page) page.classList.add("active-page");
+
+            } else if (pageName.includes("analytics")) {
+
+                const page =
+                    document.querySelector("#analyticsPage");
+
+                if (page) page.classList.add("active-page");
+
+            } else if (pageName.includes("reports")) {
+
+                const page =
+                    document.querySelector("#reportsPage");
+
+                if (page) page.classList.add("active-page");
+
+            }
+
+            console.log("Opened:", pageName);
+        });
+
     });
-});
 
 
-// SEARCH
+    // ==================================================
+    // SEARCH
+    // ==================================================
 
-const searchButton =
-    document.getElementById("searchBtn");
+    const searchButton =
+        document.querySelector("#searchBtn");
 
-if (searchButton) {
+    if (searchButton) {
 
-    searchButton.addEventListener("click", function() {
+        searchButton.addEventListener("click", () => {
 
-        const surveyNumber = prompt(
-            "Enter Survey Number to search:"
-        );
+            const surveyNumber =
+                prompt("Enter Survey Number:");
 
-        if (
-            surveyNumber &&
-            surveyNumber.trim() !== ""
-        ) {
+            if (!surveyNumber ||
+                surveyNumber.trim() === "") {
+                return;
+            }
 
             alert(
-                "LANDWISE SEARCH ENGINE\n\n" +
-                "Searching for: " +
+                "LANDWISE SEARCH\n\n" +
+                "Survey Number: " +
                 surveyNumber +
                 "\n\n" +
-                "DSA Algorithm: Hash Table\n" +
-                "Average Search Complexity: O(1)"
+                "Searching land records...\n\n" +
+                "DSA: Hash Table\n" +
+                "Average Complexity: O(1)"
             );
+
+        });
+    }
+
+
+    // ==================================================
+    // NOTIFICATION
+    // ==================================================
+
+    const notificationButton =
+        document.querySelector("#notificationBtn");
+
+    if (notificationButton) {
+
+        notificationButton.addEventListener("click", () => {
+
+            alert(
+                "LANDWISE ALERT CENTER\n\n" +
+                "🔴 3 critical land cases\n\n" +
+                "🟡 17 cases approaching deadline\n\n" +
+                "🟢 42 compensation payments processed"
+            );
+
+        });
+
+    }
+
+
+    // ==================================================
+    // MAP BUTTON
+    // ==================================================
+
+    const mapButton =
+        document.querySelector("#mapBtn");
+
+    if (mapButton) {
+
+        mapButton.addEventListener("click", () => {
+
+            const mapPage =
+                document.querySelector("#mapPage");
+
+            if (mapPage) {
+
+                hideAllPages();
+
+                mapPage.classList.add("active-page");
+
+                navLinks.forEach(link => {
+
+                    link.classList.remove("active");
+
+                    if (
+                        link.innerText
+                            .toLowerCase()
+                            .includes("project map")
+                    ) {
+                        link.classList.add("active");
+                    }
+
+                });
+
+                window.scrollTo({
+                    top: 0,
+                    behavior: "smooth"
+                });
+
+            } else {
+
+                alert(
+                    "NATIONAL GIS MAP\n\n" +
+                    "Acquired parcels\n" +
+                    "Pending parcels\n" +
+                    "Critical cases\n" +
+                    "Project boundaries\n" +
+                    "Connected locations"
+                );
+
+            }
+
+        });
+
+    }
+
+
+    // ==================================================
+    // DSA ENGINE
+    // ==================================================
+
+    const dsaButton =
+        document.querySelector("#dsaBtn");
+
+    if (dsaButton) {
+
+        dsaButton.addEventListener("click", () => {
+
+            const choice = prompt(
+                "LANDWISE DSA ENGINE\n\n" +
+                "1 → Hash Search\n" +
+                "2 → Priority Queue\n" +
+                "3 → Dijkstra Shortest Path\n" +
+                "4 → BFS / DFS\n\n" +
+                "Enter number:"
+            );
+
+            switch (choice) {
+
+                case "1":
+
+                    alert(
+                        "HASH SEARCH\n\n" +
+                        "Data Structure: Hash Table\n" +
+                        "Average Complexity: O(1)\n\n" +
+                        "Used for rapid land-record lookup."
+                    );
+
+                    break;
+
+
+                case "2":
+
+                    alert(
+                        "PRIORITY QUEUE\n\n" +
+                        "Data Structure: Max Heap\n" +
+                        "Insertion: O(log n)\n" +
+                        "Deletion: O(log n)\n\n" +
+                        "Used for urgent case prioritization."
+                    );
+
+                    break;
+
+
+                case "3":
+
+                    alert(
+                        "DIJKSTRA ALGORITHM\n\n" +
+                        "Complexity: O(E log V)\n\n" +
+                        "Used to calculate shortest routes\n" +
+                        "between project locations."
+                    );
+
+                    break;
+
+
+                case "4":
+
+                    alert(
+                        "GRAPH TRAVERSAL\n\n" +
+                        "BFS / DFS\n\n" +
+                        "Complexity: O(V + E)\n\n" +
+                        "Used to identify connected\n" +
+                        "land parcels and dependencies."
+                    );
+
+                    break;
+
+
+                default:
+
+                    alert(
+                        "Please select a valid option."
+                    );
+
+            }
+
+        });
+
+    }
+
+
+    // ==================================================
+    // PRIORITY CARDS
+    // ==================================================
+
+    const priorityItems =
+        document.querySelectorAll(".priority-item");
+
+    priorityItems.forEach(item => {
+
+        item.addEventListener("click", () => {
+
+            const caseNumber =
+                item.querySelector(
+                    ".case-info strong"
+                )?.innerText || "Unknown";
+
+            const score =
+                item.querySelector(
+                    ".score strong"
+                )?.innerText || "0";
+
+            alert(
+                "CASE DETAILS\n\n" +
+                "Case: " + caseNumber +
+                "\n" +
+                "Priority Score: " + score +
+                "\n\n" +
+                "Priority calculated using:\n" +
+                "• Deadline proximity\n" +
+                "• Project impact\n" +
+                "• Compensation status\n" +
+                "• Acquisition urgency"
+            );
+
+        });
+
+    });
+
+
+    // ==================================================
+    // PROGRESS BAR ANIMATION
+    // ==================================================
+
+    const progressBars =
+        document.querySelectorAll(
+            ".progress-bar div"
+        );
+
+    progressBars.forEach(bar => {
+
+        const finalWidth =
+            bar.style.width;
+
+        bar.style.width = "0%";
+
+        setTimeout(() => {
+
+            bar.style.transition =
+                "width 1.2s ease";
+
+            bar.style.width =
+                finalWidth;
+
+        }, 300);
+
+    });
+
+
+    // ==================================================
+    // STAT CARD CLICK
+    // ==================================================
+
+    const statCards =
+        document.querySelectorAll(".stat-card");
+
+    statCards.forEach(card => {
+
+        card.addEventListener("click", () => {
+
+            const title =
+                card.querySelector(
+                    ".stat-top span"
+                )?.innerText;
+
+            const value =
+                card.querySelector(
+                    "h2"
+                )?.innerText;
+
+            if (title && value) {
+
+                console.log(
+                    "Selected:",
+                    title,
+                    value
+                );
+
+            }
+
+        });
+
+    });
+
+
+    // ==================================================
+    // KEYBOARD SHORTCUTS
+    // ==================================================
+
+    document.addEventListener("keydown", event => {
+
+        // "/" opens search
+        if (
+            event.key === "/" &&
+            document.activeElement.tagName !== "INPUT"
+        ) {
+
+            event.preventDefault();
+
+            if (searchButton) {
+                searchButton.click();
+            }
+
         }
-    });
-}
 
+        // Escape
+        if (event.key === "Escape") {
 
-// NOTIFICATIONS
+            console.log(
+                "LANDWISE: Escape pressed"
+            );
 
-const notificationButton =
-    document.getElementById("notificationBtn");
-
-if (notificationButton) {
-
-    notificationButton.addEventListener("click", function() {
-
-        alert(
-            "LANDWISE ALERTS\n\n" +
-            "🔴 3 critical land cases\n" +
-            "🟡 17 cases approaching deadline\n" +
-            "🟢 42 compensation payments processed"
-        );
-    });
-}
-
-
-// MAP
-
-const mapButton =
-    document.getElementById("mapBtn");
-
-if (mapButton) {
-
-    mapButton.addEventListener("click", function() {
-
-        alert(
-            "NATIONAL GIS MAP\n\n" +
-            "The GIS module will display:\n\n" +
-            "• Acquired land parcels\n" +
-            "• Pending parcels\n" +
-            "• Critical cases\n" +
-            "• Project boundaries\n" +
-            "• Connected locations"
-        );
-    });
-}
-
-
-// DSA ENGINE
-
-const dsaButton =
-    document.getElementById("dsaBtn");
-
-if (dsaButton) {
-
-    dsaButton.addEventListener("click", function() {
-
-        const choice = prompt(
-            "LANDWISE DSA ENGINE\n\n" +
-            "Select Algorithm:\n\n" +
-            "1 → Hash Search\n" +
-            "2 → Priority Queue\n" +
-            "3 → Dijkstra Shortest Path\n" +
-            "4 → BFS / DFS\n\n" +
-            "Enter number:"
-        );
-
-
-        switch (choice) {
-
-            case "1":
-
-                alert(
-                    "HASH SEARCH\n\n" +
-                    "Data Structure: Hash Table\n" +
-                    "Average Complexity: O(1)\n\n" +
-                    "Used for rapid land-record lookup."
-                );
-
-                break;
-
-
-            case "2":
-
-                alert(
-                    "PRIORITY QUEUE\n\n" +
-                    "Data Structure: Max Heap\n" +
-                    "Insertion: O(log n)\n" +
-                    "Deletion: O(log n)\n\n" +
-                    "Used for urgent case prioritization."
-                );
-
-                break;
-
-
-            case "3":
-
-                alert(
-                    "DIJKSTRA ALGORITHM\n\n" +
-                    "Complexity: O(E log V)\n\n" +
-                    "Used for shortest route calculation."
-                );
-
-                break;
-
-
-            case "4":
-
-                alert(
-                    "GRAPH TRAVERSAL\n\n" +
-                    "Algorithms: BFS / DFS\n" +
-                    "Complexity: O(V + E)\n\n" +
-                    "Used for connected land and project analysis."
-                );
-
-                break;
-
-
-            default:
-
-                alert(
-                    "Please select a valid option."
-                );
         }
+
     });
-}
 
 
-// PROGRESS BAR ANIMATION
+    // ==================================================
+    // CONSOLE
+    // ==================================================
 
-const progressBars =
-    document.querySelectorAll(".progress-bar div");
+    console.log(
+        "%cLANDWISE DSA ENGINE READY",
+        "color:#35d889;font-size:16px;font-weight:700;"
+    );
 
-progressBars.forEach(bar => {
+    console.log(
+        "Hash Search → O(1)"
+    );
 
-    const finalWidth = bar.style.width;
+    console.log(
+        "Priority Queue → O(log n)"
+    );
 
-    bar.style.width = "0%";
+    console.log(
+        "Dijkstra → O(E log V)"
+    );
 
-    setTimeout(() => {
+    console.log(
+        "BFS / DFS → O(V + E)"
+    );
 
-        bar.style.transition =
-            "width 1.2s ease";
-
-        bar.style.width = finalWidth;
-
-    }, 300);
 });
-
-
-// PRIORITY CASE DETAILS
-
-const priorityItems =
-    document.querySelectorAll(".priority-item");
-
-priorityItems.forEach(item => {
-
-    item.addEventListener("click", function() {
-
-        const caseNumber =
-            this.querySelector(
-                ".case-info strong"
-            )?.innerText;
-
-        const score =
-            this.querySelector(
-                ".score strong"
-            )?.innerText;
-
-        alert(
-            "CASE DETAILS\n\n" +
-            "Case: " + caseNumber + "\n" +
-            "Priority Score: " + score + "\n\n" +
-            "Priority calculated using:\n" +
-            "• Deadline proximity\n" +
-            "• Project impact\n" +
-            "• Compensation status\n" +
-            "• Acquisition urgency"
-        );
-    });
-});
-
-
-// CONSOLE INFORMATION
-
-console.log(
-    "%cLANDWISE DSA ENGINE INITIALIZED",
-    "color:#5ee59b;font-size:16px;font-weight:bold;"
-);
-
-console.log("Hash Search → O(1)");
-console.log("Priority Queue → O(log n)");
-console.log("Dijkstra → O(E log V)");
-console.log("BFS / DFS → O(V + E)");
