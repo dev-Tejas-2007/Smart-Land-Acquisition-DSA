@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LANDWISE | Intelligent Land Acquisition</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="app">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <div class="brand">
+            <div class="brand-icon">L</div>
+            <div>
+                <h2>LANDWISE</h2>
+                <span>Decision Intelligence</span>
+            </div>
+        </div>
+
+        <nav>
+            <a class="active" href="#"><span>⌂</span> Dashboard</a>
+            <a href="#"><span>▣</span> Land Records</a>
+            <a href="#"><span>⌁</span> Project Map</a>
+            <a href="#"><span>⚡</span> Priority Engine</a>
+            <a href="#"><span>◈</span> DSA Analytics</a>
+            <a href="#"><span>▤</span> Reports</a>
+        </nav>
+
+        <div class="sidebar-bottom">
+            <div class="system-status">
+                <span class="status-dot"></span>
+                System Operational
+            </div>
+
+            <div class="version">LANDWISE v1.0</div>
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN -->
+    <main class="main">
+
+        <!-- TOP BAR -->
+        <header class="topbar">
+
+            <div>
+                <p class="eyebrow">NATIONAL LAND ACQUISITION SYSTEM</p>
+                <h1>Command Dashboard</h1>
+            </div>
+
+            <div class="top-actions">
+
+                <button class="icon-btn" id="searchBtn">⌕</button>
+
+                <button class="icon-btn notification" id="notificationBtn">
+                    ♢
+                    <span></span>
+                </button>
+
+                <div class="profile">
+                    <div class="avatar">AD</div>
+
+                    <div>
+                        <strong>Administrator</strong>
+                        <small>Central Authority</small>
+                    </div>
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <!-- STAT CARDS -->
+        <section class="stats">
+
+            <div class="stat-card">
+                <div class="stat-top">
+                    <span>Total Land Parcels</span>
+                    <div class="stat-icon">▦</div>
+                </div>
+
+                <h2>12,458</h2>
+                <p class="positive">↑ 8.4% <span>this quarter</span></p>
+            </div>
+
+
+            <div class="stat-card">
+                <div class="stat-top">
+                    <span>Acquired</span>
+                    <div class="stat-icon">✓</div>
+                </div>
+
+                <h2>8,721</h2>
+                <p class="positive">↑ 12.7% <span>this quarter</span></p>
+            </div>
+
+
+            <div class="stat-card">
+                <div class="stat-top">
+                    <span>Pending Cases</span>
+                    <div class="stat-icon warning">!</div>
+                </div>
+
+                <h2>3,737</h2>
+                <p class="negative">↓ 4.2% <span>from last month</span></p>
+            </div>
+
+
+            <div class="stat-card">
+                <div class="stat-top">
+                    <span>Compensation</span>
+                    <div class="stat-icon">₹</div>
+                </div>
+
+                <h2>₹842Cr</h2>
+                <p class="positive">↑ 6.1% <span>disbursed</span></p>
+            </div>
+
+        </section>
+
+
+        <!-- MAIN GRID -->
+        <section class="dashboard-grid">
+
+            <!-- MAP -->
+            <div class="panel map-panel">
+
+                <div class="panel-header">
+
+                    <div>
+                        <p class="panel-label">GEOSPATIAL INTELLIGENCE</p>
+                        <h3>National Acquisition Map</h3>
+                    </div>
+
+                    <button class="outline-btn" id="mapBtn">
+                        View Full Map →
+                    </button>
+
+                </div>
+
+
+                <div class="map">
+
+                    <div class="map-grid"></div>
+
+                    <div class="map-route route-one"></div>
+                    <div class="map-route route-two"></div>
+
+                    <div class="marker marker-1"></div>
+                    <div class="marker marker-2"></div>
+                    <div class="marker marker-3"></div>
+                    <div class="marker marker-4"></div>
+
+                    <div class="map-label label-one">
+                        Maharashtra
+                    </div>
+
+                    <div class="map-label label-two">
+                        Project Zone
+                    </div>
+
+
+                    <div class="map-legend">
+
+                        <div>
+                            <i class="acquired"></i>
+                            Acquired
+                        </div>
+
+                        <div>
+                            <i class="pending"></i>
+                            Pending
+                        </div>
+
+                        <div>
+                            <i class="critical"></i>
+                            Critical
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- PRIORITY ENGINE -->
+            <div class="panel priority-panel">
+
+                <div class="panel-header">
+
+                    <div>
+                        <p class="panel-label">DSA ENGINE</p>
+                        <h3>Priority Queue</h3>
+                    </div>
+
+                    <span class="live">LIVE</span>
+
+                </div>
+
+
+                <p class="description">
+                    Cases ranked using acquisition urgency,
+                    deadline proximity and impact score.
+                </p>
+
+
+                <div class="priority-list">
+
+                    <div class="priority-item critical-item">
+
+                        <div class="rank">01</div>
+
+                        <div class="case-info">
+                            <strong>MH12-4821</strong>
+                            <span>Highway Expansion</span>
+                        </div>
+
+                        <div class="score">
+                            <strong>96</strong>
+                            <span>Priority</span>
+                        </div>
+
+                    </div>
+
+
+                    <div class="priority-item">
+
+                        <div class="rank">02</div>
+
+                        <div class="case-info">
+                            <strong>MH14-2187</strong>
+                            <span>Industrial Corridor</span>
+                        </div>
+
+                        <div class="score">
+                            <strong>91</strong>
+                            <span>Priority</span>
+                        </div>
+
+                    </div>
+
+
+                    <div class="priority-item">
+
+                        <div class="rank">03</div>
+
+                        <div class="case-info">
+                            <strong>MH09-7732</strong>
+                            <span>Rail Infrastructure</span>
+                        </div>
+
+                        <div class="score">
+                            <strong>87</strong>
+                            <span>Priority</span>
+                        </div>
+
+                    </div>
+
+
+                    <div class="priority-item">
+
+                        <div class="rank">04</div>
+
+                        <div class="case-info">
+                            <strong>MH15-1049</strong>
+                            <span>Renewable Energy</span>
+                        </div>
+
+                        <div class="score">
+                            <strong>81</strong>
+                            <span>Priority</span>
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <button class="primary-btn" id="dsaBtn">
+                    Open DSA Engine →
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- BOTTOM GRID -->
+        <section class="bottom-grid">
+
+            <!-- PROJECT PROGRESS -->
+            <div class="panel">
+
+                <div class="panel-header">
+
+                    <div>
+                        <p class="panel-label">PROJECT MONITORING</p>
+                        <h3>Acquisition Progress</h3>
+                    </div>
+
+                    <button class="dots">•••</button>
+
+                </div>
+
+
+                <div class="progress-row">
+
+                    <div class="project-name">
+                        <strong>National Highway 48</strong>
+                        <span>Maharashtra</span>
+                    </div>
+
+                    <div class="progress">
+                        <div class="progress-bar">
+                            <div style="width:82%"></div>
+                        </div>
+
+                        <span>82%</span>
+                    </div>
+
+                </div>
+
+
+                <div class="progress-row">
+
+                    <div class="project-name">
+                        <strong>Western Freight Corridor</strong>
+                        <span>Maharashtra • Gujarat</span>
+                    </div>
+
+                    <div class="progress">
+                        <div class="progress-bar">
+                            <div style="width:67%"></div>
+                        </div>
+
+                        <span>67%</span>
+                    </div>
+
+                </div>
+
+
+                <div class="progress-row">
+
+                    <div class="project-name">
+                        <strong>Pune Ring Road</strong>
+                        <span>Pune</span>
+                    </div>
+
+                    <div class="progress">
+                        <div class="progress-bar">
+                            <div style="width:54%"></div>
+                        </div>
+
+                        <span>54%</span>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ALGORITHM -->
+            <div class="panel algorithm-panel">
+
+                <div class="panel-header">
+
+                    <div>
+                        <p class="panel-label">ALGORITHM PERFORMANCE</p>
+                        <h3>DSA Operations</h3>
+                    </div>
+
+                </div>
+
+
+                <div class="algorithm">
+                    <span>HASH SEARCH</span>
+                    <strong>O(1)</strong>
+                    <small>12,458 records</small>
+                </div>
+
+                <div class="algorithm">
+                    <span>DIJKSTRA</span>
+                    <strong>O(E log V)</strong>
+                    <small>Route optimization</small>
+                </div>
+
+                <div class="algorithm">
+                    <span>PRIORITY QUEUE</span>
+                    <strong>O(log n)</strong>
+                    <small>Case prioritization</small>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <footer>
+            <span>LANDWISE • Intelligent Governance Infrastructure</span>
+            <span id="syncTime">Last synchronized: Just now</span>
+        </footer>
+
+    </main>
+
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>
