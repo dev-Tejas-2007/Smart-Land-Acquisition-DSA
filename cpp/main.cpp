@@ -1,828 +1,475 @@
 #include <iostream>
 #include <vector>
-#include <queue>
-#include <unordered_map>
-#include <algorithm>
-#include <climits>
 #include <string>
+#include <iomanip>
+#include <fstream>
+#include <sstream>
+#include <stdexcept>
+#include <limits>
 
 using namespace std;
 
-
 // ======================================================
-// LANDWISE - INTELLIGENT LAND ACQUISITION DSA ENGINE
-// ======================================================
-
-
-// ======================================================
-// LAND RECORD
+// 1. CUSTOM EXCEPTION CLASSES
 // ======================================================
 
-struct LandRecord {
+class DuplicateSurveyException : public exception {
+public:
+    const char* what() const noexcept override {
+        return "[EXCEPTION ERROR] A record with this Survey Number already exists!";
+    }
+};
 
+class InvalidDataException : public exception {
+private:
+    string message;
+public:
+    InvalidDataException(string msg) : message("[EXCEPTION ERROR] " + msg) {}
+    const char* what() const noexcept override {
+        return message.c_str();
+    }
+};
+
+
+// ======================================================
+// 2. ABSTRACTION (Pure Virtual Base Class)
+// ======================================================
+
+class BaseLand {
+public:
+    virtual void displayTableRow() const = 0;
+    virtual ~BaseLand() {}
+};
+
+
+// ======================================================
+// 3. BASE CLASS & SINGLE INHERITANCE
+// ======================================================
+
+class LandRecord : public BaseLand {
+protected:
     string surveyNumber;
-    string owner;
+    string ownerName;
     string location;
-
-    double area;
-
-    string status;
-
-    int priority;
-};
-
-
-// ======================================================
-// HASH TABLE
-// Average Search: O(1)
-// ======================================================
-
-class LandHashTable {
-
-private:
-
-    unordered_map<string, LandRecord> records;
-
+    double areaInAcres;
 
 public:
-
-    void insertRecord(
-        LandRecord record
-    ) {
-
-        records[
-            record.surveyNumber
-        ] = record;
-    }
-
-
-    void searchRecord(
-        string surveyNumber
-    ) {
-
-        auto it =
-            records.find(
-                surveyNumber
-            );
-
-
-        if (
-            it == records.end()
-        ) {
-
-            cout
-                << "\nLand Record Not Found.\n";
-
-            return;
+    LandRecord(string survey, string owner, string loc, double area) {
+        if (area <= 0) {
+            throw InvalidDataException("Land area must be greater than 0 acres.");
         }
-
-
-        LandRecord r =
-            it->second;
-
-
-        cout
-            << "\n========== LAND RECORD ==========\n";
-
-        cout
-            << "Survey Number : "
-            << r.surveyNumber
-            << endl;
-
-        cout
-            << "Owner         : "
-            << r.owner
-            << endl;
-
-        cout
-            << "Location      : "
-            << r.location
-            << endl;
-
-        cout
-            << "Area          : "
-            << r.area
-            << " acres"
-            << endl;
-
-        cout
-            << "Status        : "
-            << r.status
-            << endl;
-
-        cout
-            << "Priority      : "
-            << r.priority
-            << endl;
-
-        cout
-            << "=================================\n";
+        surveyNumber = survey;
+        ownerName = owner;
+        location = loc;
+        areaInAcres = area;
     }
 
-
-    void displayAll() {
-
-        cout
-            << "\n========== ALL LAND RECORDS ==========\n";
-
-
-        for (
-            auto &pair : records
-        ) {
-
-            LandRecord r =
-                pair.second;
-
-
-            cout
-                << r.surveyNumber
-                << " | "
-                << r.owner
-                << " | "
-                << r.location
-                << " | "
-                << r.area
-                << " acres"
-                << " | "
-                << r.status
-                << endl;
-        }
-
-
-        cout
-            << "======================================\n";
+    void displayTableRow() const override {
+        cout << "| " << left << setw(14) << surveyNumber 
+             << setw(18) << ownerName 
+             << setw(12) << location 
+             << setw(10) << areaInAcres;
     }
 
+    string getSurveyNumber() const { return surveyNumber; }
+    string getOwnerName() const { return ownerName; }
+    string getLocation() const { return location; }
+    double getArea() const { return areaInAcres; }
 
-    int size() {
-
-        return records.size();
-    }
+    // Friend Function Declaration
+    friend void generateOfficialNotice(const LandRecord& land);
 };
 
 
 // ======================================================
-// PRIORITY QUEUE
-// Highest Priority Case First
+// 4. MULTILEVEL INHERITANCE & SOCIAL WELFARE FEATURE
 // ======================================================
 
-struct PriorityCase {
-
-    string surveyNumber;
-
-    string project;
-
-    int priority;
-
-
-    bool operator<(
-        const PriorityCase& other
-    ) const {
-
-        return priority <
-               other.priority;
-    }
-};
-
-
-class PriorityEngine {
-
+class SocialWelfareLand : public LandRecord {
 private:
-
-    priority_queue<PriorityCase> pq;
-
+    string publicProjectName; 
+    int socialImpactScore;   
 
 public:
-
-    void addCase(
-        string surveyNumber,
-        string project,
-        int priority
-    ) {
-
-        pq.push({
-
-            surveyNumber,
-
-            project,
-
-            priority
-
-        });
-    }
-
-
-    void processNextCase() {
-
-        if (
-            pq.empty()
-        ) {
-
-            cout
-                << "\nNo pending cases.\n";
-
-            return;
+    SocialWelfareLand(string survey, string owner, string loc, double area, string project, int score)
+        : LandRecord(survey, owner, loc, area) {
+        if (score < 1 || score > 100) {
+            throw InvalidDataException("Social Impact Score must be between 1 and 100.");
         }
-
-
-        PriorityCase current =
-            pq.top();
-
-
-        pq.pop();
-
-
-        cout
-            << "\n========== NEXT PRIORITY CASE ==========\n";
-
-
-        cout
-            << "Survey Number : "
-            << current.surveyNumber
-            << endl;
-
-
-        cout
-            << "Project       : "
-            << current.project
-            << endl;
-
-
-        cout
-            << "Priority Score: "
-            << current.priority
-            << endl;
-
-
-        cout
-            << "========================================\n";
+        publicProjectName = project;
+        socialImpactScore = score;
     }
 
-
-    void displayQueue() {
-
-        priority_queue<
-            PriorityCase
-        > temp = pq;
-
-
-        cout
-            << "\n========== PRIORITY QUEUE ==========\n";
-
-
-        while (
-            !temp.empty()
-        ) {
-
-            PriorityCase c =
-                temp.top();
-
-
-            temp.pop();
-
-
-            cout
-                << c.surveyNumber
-                << " | "
-                << c.project
-                << " | Priority: "
-                << c.priority
-                << endl;
-        }
-
-
-        cout
-            << "====================================\n";
+    void displayTableRow() const override {
+        LandRecord::displayTableRow();
+        cout << left << setw(26) << publicProjectName 
+             << setw(8) << socialImpactScore << "|\n";
     }
+
+    string getProjectName() const { return publicProjectName; }
+    int getImpactScore() const { return socialImpactScore; }
 };
 
 
 // ======================================================
-// GRAPH + DIJKSTRA
+// 5. FRIEND FUNCTION
 // ======================================================
 
-class Graph {
-
-private:
-
-    int vertices;
-
-    vector<
-        vector<
-            pair<int, int>
-        >
-    > adjacency;
-
-
-public:
-
-    Graph(int v) {
-
-        vertices = v;
-
-        adjacency.resize(
-            vertices
-        );
-    }
-
-
-    void addEdge(
-        int source,
-        int destination,
-        int distance
-    ) {
-
-        adjacency[source]
-            .push_back({
-                destination,
-                distance
-            });
-
-
-        adjacency[destination]
-            .push_back({
-                source,
-                distance
-            });
-    }
-
-
-    void dijkstra(
-        int source
-    ) {
-
-        vector<int> distance(
-            vertices,
-            INT_MAX
-        );
-
-
-        priority_queue<
-            pair<int, int>,
-            vector<pair<int, int>>,
-            greater<pair<int, int>>
-        > pq;
-
-
-        distance[source] = 0;
-
-
-        pq.push({
-            0,
-            source
-        });
-
-
-        while (
-            !pq.empty()
-        ) {
-
-            int currentDistance =
-                pq.top().first;
-
-
-            int currentVertex =
-                pq.top().second;
-
-
-            pq.pop();
-
-
-            if (
-                currentDistance >
-                distance[currentVertex]
-            ) {
-
-                continue;
-            }
-
-
-            for (
-                auto edge :
-                adjacency[currentVertex]
-            ) {
-
-                int nextVertex =
-                    edge.first;
-
-
-                int edgeWeight =
-                    edge.second;
-
-
-                if (
-                    distance[currentVertex]
-                    + edgeWeight
-                    <
-                    distance[nextVertex]
-                ) {
-
-                    distance[nextVertex] =
-
-                        distance[currentVertex]
-                        + edgeWeight;
-
-
-                    pq.push({
-
-                        distance[nextVertex],
-
-                        nextVertex
-
-                    });
-                }
-            }
-        }
-
-
-        cout
-            << "\n========== SHORTEST ROUTES ==========\n";
-
-
-        for (
-            int i = 0;
-            i < vertices;
-            i++
-        ) {
-
-            cout
-                << "Location "
-                << i
-                << " -> ";
-
-
-            if (
-                distance[i] ==
-                INT_MAX
-            ) {
-
-                cout
-                    << "Unreachable";
-
-            } else {
-
-                cout
-                    << distance[i]
-                    << " km";
-            }
-
-
-            cout
-                << endl;
-        }
-
-
-        cout
-            << "=====================================\n";
-    }
-};
-
-
-// ======================================================
-// SORTING
-// ======================================================
-
-void sortByPriority(
-    vector<LandRecord>& records
-) {
-
-    sort(
-
-        records.begin(),
-
-        records.end(),
-
-        [](
-            const LandRecord& a,
-            const LandRecord& b
-        ) {
-
-            return
-                a.priority >
-                b.priority;
-        }
-    );
-
-
-    cout
-        << "\n========== PRIORITY SORT ==========\n";
-
-
-    for (
-        auto &r : records
-    ) {
-
-        cout
-            << r.surveyNumber
-            << " | "
-            << r.owner
-            << " | Priority: "
-            << r.priority
-            << endl;
-    }
-
-
-    cout
-        << "===================================\n";
+void generateOfficialNotice(const LandRecord& land) {
+    cout << "\n+--------------------------------------------------------------------------+\n";
+    cout << "|                       OFFICIAL GAZETTE NOTICE                            |\n";
+    cout << "+--------------------------------------------------------------------------+\n";
+    cout << " Notice is hereby issued for mandatory acquisition of:\n";
+    cout << "  * Survey Number   : " << land.surveyNumber << "\n";
+    cout << "  * Registered Owner: " << land.ownerName << "\n";
+    cout << "  * Location        : " << land.location << "\n";
+    cout << "  * Total Area      : " << land.areaInAcres << " acres\n";
+    cout << "+--------------------------------------------------------------------------+\n";
 }
 
 
 // ======================================================
-// MAIN
+// 6. DATA STRUCTURE: SINGLY LINKED LIST (Audit Log)
+// ======================================================
+
+struct LogNode {
+    string logMessage;
+    LogNode* next;
+
+    LogNode(string msg) : logMessage(msg), next(nullptr) {}
+};
+
+class AuditLogList {
+private:
+    LogNode* head;
+
+public:
+    AuditLogList() : head(nullptr) {}
+
+    void addLog(string message) {
+        LogNode* newNode = new LogNode(message);
+        newNode->next = head;
+        head = newNode;
+    }
+
+    void showAuditHistory() const {
+        cout << "\n============================================================================";
+        cout << "\n                     SYSTEM AUDIT TRAIL (Linked List)                      ";
+        cout << "\n============================================================================\n";
+        LogNode* temp = head;
+        int step = 1;
+        if (temp == nullptr) {
+            cout << "  No activity logged yet.\n";
+        }
+        while (temp != nullptr) {
+            cout << "  [" << step++ << "] " << temp->logMessage << endl;
+            temp = temp->next;
+        }
+        cout << "============================================================================\n";
+    }
+
+    ~AuditLogList() {
+        while (head != nullptr) {
+            LogNode* temp = head;
+            head = head->next;
+            delete temp;
+        }
+    }
+};
+
+
+// ======================================================
+// 7. INPUT VALIDATION HELPERS (Prevents Crashing)
+// ======================================================
+
+int getValidIntInput(string prompt, int minVal, int maxVal) {
+    int value;
+    while (true) {
+        cout << prompt;
+        if (cin >> value && value >= minVal && value <= maxVal) {
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            return value;
+        }
+        cout << "[!] Invalid Input. Please enter a valid number between " << minVal << " and " << maxVal << ".\n";
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    }
+}
+
+double getValidDoubleInput(string prompt, double minVal) {
+    double value;
+    while (true) {
+        cout << prompt;
+        if (cin >> value && value > minVal) {
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            return value;
+        }
+        cout << "[!] Invalid Input. Please enter a positive decimal number greater than " << minVal << ".\n";
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    }
+}
+
+string getNonEmptyString(string prompt) {
+    string input;
+    while (true) {
+        cout << prompt;
+        getline(cin, input);
+        if (!input.empty()) return input;
+        cout << "[!] Input cannot be empty. Please try again.\n";
+    }
+}
+
+
+// ======================================================
+// 8. FILE HANDLING FUNCTIONS
+// ======================================================
+
+void saveRecordsToFile(const vector<SocialWelfareLand>& lands, const string& filename) {
+    ofstream file(filename);
+    if (!file) {
+        throw runtime_error("Failed to open file for saving records!");
+    }
+    for (const auto& land : lands) {
+        file << land.getSurveyNumber() << ","
+             << land.getOwnerName() << ","
+             << land.getLocation() << ","
+             << land.getArea() << ","
+             << land.getProjectName() << ","
+             << land.getImpactScore() << "\n";
+    }
+    file.close();
+}
+
+void loadRecordsFromFile(vector<SocialWelfareLand>& lands, const string& filename, AuditLogList& audit) {
+    ifstream file(filename);
+    if (!file) return; // File doesn't exist yet, start fresh
+
+    string line;
+    int loadedCount = 0;
+    while (getline(file, line)) {
+        stringstream ss(line);
+        string survey, owner, location, areaStr, project, scoreStr;
+
+        if (getline(ss, survey, ',') &&
+            getline(ss, owner, ',') &&
+            getline(ss, location, ',') &&
+            getline(ss, areaStr, ',') &&
+            getline(ss, project, ',') &&
+            getline(ss, scoreStr, ',')) {
+
+            try {
+                double area = stod(areaStr);
+                int score = stoi(scoreStr);
+                lands.push_back(SocialWelfareLand(survey, owner, location, area, project, score));
+                loadedCount++;
+            } catch (...) {
+                // Ignore corrupt line
+            }
+        }
+    }
+    file.close();
+    if (loadedCount > 0) {
+        audit.addLog("Loaded " + to_string(loadedCount) + " land record(s) from 'land_records.txt'.");
+    }
+}
+
+
+// ======================================================
+// 9. ALGORITHMS (Bubble Sort & Linear Search)
+// ======================================================
+
+void sortByImpactScore(vector<SocialWelfareLand>& lands) {
+    int n = lands.size();
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = 0; j < n - i - 1; j++) {
+            if (lands[j].getImpactScore() < lands[j + 1].getImpactScore()) {
+                SocialWelfareLand temp = lands[j];
+                lands[j] = lands[j + 1];
+                lands[j + 1] = temp;
+            }
+        }
+    }
+}
+
+int searchBySurveyNumber(const vector<SocialWelfareLand>& lands, string targetSurvey) {
+    for (size_t i = 0; i < lands.size(); i++) {
+        if (lands[i].getSurveyNumber() == targetSurvey) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+
+// ======================================================
+// 10. UI DISPLAY TABLE HELPERS
+// ======================================================
+
+void printTableHeader() {
+    cout << "\n+---------------+-------------------+------------+----------+---------------------------+-------+\n";
+    cout << "| SURVEY NO     | OWNER NAME        | LOCATION   | ACRES    | PUBLIC PURPOSE            | SCORE |\n";
+    cout << "+---------------+-------------------+------------+----------+---------------------------+-------+\n";
+}
+
+void printTableFooter() {
+    cout << "+---------------+-------------------+------------+----------+---------------------------+-------+\n";
+}
+
+void displayAllRecords(const vector<SocialWelfareLand>& lands) {
+    if (lands.empty()) {
+        cout << "\n[!] No land records available in the database.\n";
+        return;
+    }
+    printTableHeader();
+    for (const auto& land : lands) {
+        land.displayTableRow();
+    }
+    printTableFooter();
+}
+
+
+// ======================================================
+// MAIN FUNCTION (Interactive Loop)
 // ======================================================
 
 int main() {
-
-    cout << endl;
-
-    cout
-        << "=============================================\n";
-
-    cout
-        << "       LANDWISE DSA ENGINE v1.0\n";
-
-    cout
-        << " Intelligent Land Acquisition System\n";
-
-    cout
-        << "=============================================\n";
-
-
-    // ==================================================
-    // HASH TABLE
-    // ==================================================
-
-    LandHashTable landDB;
-
-
-    landDB.insertRecord({
-
-        "MH12-4821",
-
-        "Rajesh Patil",
-
-        "Pune",
-
-        2.5,
-
-        "Pending",
-
-        96
-
-    });
-
-
-    landDB.insertRecord({
-
-        "MH14-2187",
-
-        "Amit Sharma",
-
-        "Pimpri",
-
-        4.2,
-
-        "Under Verification",
-
-        91
-
-    });
-
-
-    landDB.insertRecord({
-
-        "MH09-7732",
-
-        "Sneha Kulkarni",
-
-        "Satara",
-
-        3.7,
-
-        "Acquired",
-
-        87
-
-    });
-
-
-    landDB.insertRecord({
-
-        "MH15-1049",
-
-        "Rahul Deshmukh",
-
-        "Nashik",
-
-        5.1,
-
-        "Pending",
-
-        81
-
-    });
-
-
-    cout
-        << "\nTotal Land Records: "
-        << landDB.size()
-        << endl;
-
-
-    landDB.searchRecord(
-        "MH12-4821"
-    );
-
-
-    // ==================================================
-    // PRIORITY QUEUE
-    // ==================================================
-
-    PriorityEngine priorityEngine;
-
-
-    priorityEngine.addCase(
-        "MH12-4821",
-        "National Highway 48",
-        96
-    );
-
-
-    priorityEngine.addCase(
-        "MH14-2187",
-        "Industrial Corridor",
-        91
-    );
-
-
-    priorityEngine.addCase(
-        "MH09-7732",
-        "Rail Infrastructure",
-        87
-    );
-
-
-    priorityEngine.addCase(
-        "MH15-1049",
-        "Renewable Energy",
-        81
-    );
-
-
-    priorityEngine.displayQueue();
-
-
-    priorityEngine.processNextCase();
-
-
-    // ==================================================
-    // GRAPH
-    // ==================================================
-
-    Graph projectMap(6);
-
-
-    projectMap.addEdge(
-        0,
-        1,
-        5
-    );
-
-
-    projectMap.addEdge(
-        0,
-        2,
-        9
-    );
-
-
-    projectMap.addEdge(
-        1,
-        2,
-        3
-    );
-
-
-    projectMap.addEdge(
-        1,
-        3,
-        7
-    );
-
-
-    projectMap.addEdge(
-        2,
-        4,
-        4
-    );
-
-
-    projectMap.addEdge(
-        3,
-        5,
-        6
-    );
-
-
-    projectMap.addEdge(
-        4,
-        5,
-        2
-    );
-
-
-    cout
-        << "\nRunning Dijkstra Algorithm...\n";
-
-
-    projectMap.dijkstra(
-        0
-    );
-
-
-    // ==================================================
-    // SORTING
-    // ==================================================
-
-    vector<LandRecord> records = {
-
-        {
-            "MH12-4821",
-            "Rajesh Patil",
-            "Pune",
-            2.5,
-            "Pending",
-            96
-        },
-
-        {
-            "MH14-2187",
-            "Amit Sharma",
-            "Pimpri",
-            4.2,
-            "Verification",
-            91
-        },
-
-        {
-            "MH09-7732",
-            "Sneha Kulkarni",
-            "Satara",
-            3.7,
-            "Acquired",
-            87
-        },
-
-        {
-            "MH15-1049",
-            "Rahul Deshmukh",
-            "Nashik",
-            5.1,
-            "Pending",
-            81
+    vector<SocialWelfareLand> welfareLands;
+    AuditLogList auditTrail;
+    const string storageFile = "land_records.txt";
+
+    auditTrail.addLog("System started.");
+
+    // Load persistent data from file
+    loadRecordsFromFile(welfareLands, storageFile, auditTrail);
+
+    // If file is empty, initialize default sample dataset
+    if (welfareLands.empty()) {
+        welfareLands.push_back(SocialWelfareLand("MH12-8810", "Anil Deshmukh", "Pune", 4.5, "District Hospital", 95));
+        welfareLands.push_back(SocialWelfareLand("MH14-3321", "Sunita Shinde", "Pimpri", 2.0, "Public Primary School", 88));
+        welfareLands.push_back(SocialWelfareLand("MH09-1145", "Kiran Pawar", "Satara", 6.0, "Solar Energy Park", 92));
+        auditTrail.addLog("Initialized default benchmark records.");
+    }
+
+    while (true) {
+        cout << "\n============================================================================\n";
+        cout << "          LANDWISE v2.0 -- INTELLIGENT LAND ACQUISITION SYSTEM             \n";
+        cout << "============================================================================\n";
+        cout << "  1. View All Land Records\n";
+        cout << "  2. Add New Land Record (Input Validation & Exception Check)\n";
+        cout << "  3. Sort Records by Social Impact Score (Bubble Sort)\n";
+        cout << "  4. Search Record by Survey Number (Linear Search)\n";
+        cout << "  5. Generate Gazette Notice (Friend Function)\n";
+        cout << "  6. View System Audit Trail (Linked List)\n";
+        cout << "  7. Save & Exit (File I/O)\n";
+        cout << "============================================================================\n";
+
+        int choice = getValidIntInput("Select an option (1-7): ", 1, 7);
+
+        switch (choice) {
+            case 1: {
+                cout << "\n>>> CURRENT REGISTERED LAND RECORDS";
+                displayAllRecords(welfareLands);
+                auditTrail.addLog("Viewed all land records.");
+                break;
+            }
+
+            case 2: {
+                cout << "\n>>> ADD NEW LAND RECORD\n";
+                try {
+                    string survey = getNonEmptyString("Enter Survey Number (e.g., MH12-9900): ");
+
+                    // Check for duplicate key exception
+                    if (searchBySurveyNumber(welfareLands, survey) != -1) {
+                        throw DuplicateSurveyException();
+                    }
+
+                    string owner = getNonEmptyString("Enter Owner Name: ");
+                    string location = getNonEmptyString("Enter Location: ");
+                    double area = getValidDoubleInput("Enter Area in Acres: ", 0.0);
+                    string project = getNonEmptyString("Enter Public Project Name: ");
+                    int score = getValidIntInput("Enter Social Impact Score (1-100): ", 1, 100);
+
+                    // Create new object (validates via constructors)
+                    SocialWelfareLand newRecord(survey, owner, location, area, project, score);
+                    welfareLands.push_back(newRecord);
+
+                    cout << "\n[SUCCESS] Land record successfully registered!\n";
+                    auditTrail.addLog("Added new record: Survey No " + survey);
+
+                } catch (const exception& e) {
+                    cout << "\n" << e.what() << "\n";
+                    auditTrail.addLog("Failed entry attempt due to exception.");
+                }
+                break;
+            }
+
+            case 3: {
+                if (welfareLands.empty()) {
+                    cout << "\n[!] No records to sort.\n";
+                } else {
+                    sortByImpactScore(welfareLands);
+                    cout << "\n>>> RECORDS SORTED BY SOCIAL IMPACT SCORE (HIGHEST FIRST)";
+                    displayAllRecords(welfareLands);
+                    auditTrail.addLog("Sorted land records using Bubble Sort.");
+                }
+                break;
+            }
+
+            case 4: {
+                if (welfareLands.empty()) {
+                    cout << "\n[!] Database is empty.\n";
+                } else {
+                    string searchKey = getNonEmptyString("\nEnter Survey Number to Search: ");
+                    int resultIndex = searchBySurveyNumber(welfareLands, searchKey);
+
+                    if (resultIndex != -1) {
+                        cout << "\n[SUCCESS] Record Found at Index [" << resultIndex << "]:";
+                        printTableHeader();
+                        welfareLands[resultIndex].displayTableRow();
+                        printTableFooter();
+                        auditTrail.addLog("Searched and found record: " + searchKey);
+                    } else {
+                        cout << "\n[!] Record for Survey Number '" << searchKey << "' was not found.\n";
+                        auditTrail.addLog("Unsuccessful search query: " + searchKey);
+                    }
+                }
+                break;
+            }
+
+            case 5: {
+                if (welfareLands.empty()) {
+                    cout << "\n[!] No records available.\n";
+                } else {
+                    string surveyKey = getNonEmptyString("\nEnter Survey Number to Issue Gazette Notice: ");
+                    int index = searchBySurveyNumber(welfareLands, surveyKey);
+
+                    if (index != -1) {
+                        // Friend Function call
+                        generateOfficialNotice(welfareLands[index]);
+                        auditTrail.addLog("Issued Gazette Notice for Survey No: " + surveyKey);
+                    } else {
+                        cout << "\n[!] Cannot issue notice. Survey number not found.\n";
+                    }
+                }
+                break;
+            }
+
+            case 6: {
+                auditTrail.showAuditHistory();
+                break;
+            }
+
+            case 7: {
+                try {
+                    saveRecordsToFile(welfareLands, storageFile);
+                    cout << "\n[FILE I/O SUCCESS] All data saved to '" << storageFile << "'.\n";
+                } catch (const exception& e) {
+                    cout << "\n" << e.what() << "\n";
+                }
+                cout << "Exiting LandWise Engine. Goodbye!\n\n";
+                return 0;
+            }
         }
-    };
-
-
-    sortByPriority(
-        records
-    );
-
-
-    // ==================================================
-    // FINAL
-    // ==================================================
-
-    cout
-        << "\n=============================================\n";
-
-    cout
-        << "DSA ENGINE EXECUTION COMPLETED\n";
-
-
-    cout
-        << "Algorithms Used:\n";
-
-
-    cout
-        << "1. Hash Table       -> O(1) average search\n";
-
-
-    cout
-        << "2. Priority Queue   -> O(log n)\n";
-
-
-    cout
-        << "3. Dijkstra         -> O(E log V)\n";
-
-
-    cout
-        << "4. Sorting          -> O(n log n)\n";
-
-
-    cout
-        << "=============================================\n";
-
-
-    return 0;
+    }
 }
